@@ -19,6 +19,14 @@ parser.add_argument('--ngpus', default=1, type=int,
                     help='number of GPUs to use; 0 if you want to run on CPU')
 parser.add_argument('--model_arch', choices=['alexnet', 'resnet50', 'resnet50_at', 'cornets'], default='resnet50',
                     help='back-end model architecture to load')
+parser.add_argument('--session', required=False,
+                    help='session')
+parser.add_argument('--layer', required=False,
+                    help='session')
+parser.add_argument('--sublayer', required=False,
+                    help='session')
+parser.add_argument('--output_path', required=False,
+                    help='session')
 
 FLAGS, FIRE_FLAGS = parser.parse_known_args()
 
@@ -88,17 +96,15 @@ def val():
     except:
         m = model
     m=m.model
-    # print(m)
-    model_layer = getattr(getattr(m, 'V4'), 'conv1')
+    model_layer = getattr(getattr(m, FLAGS.layer), FLAGS.sublayer)
     model_layer.register_forward_hook(_store_feats)
     f = h5py.File('/content/gdrive/MyDrive/npc_v4_data.h5','r')
-    # if FLAGS.session=='natural':
-    #   data = f['images/naturalistic'][:]
-    # else:
-      # session_path=FLAGS.session.replace('_','/')
-      # final_path=session_path[:-1]+'_'+session_path[-1:]
-      # data = f['images/synthetic/monkey_'+final_path][:]
-    data = f['images/synthetic/monkey_m/ohp/session_1'][:]
+    if FLAGS.session=='natural':
+      data = f['images/naturalistic'][:]
+    else:
+      session_path=FLAGS.session.replace('_','/')
+      final_path=session_path[:-1]+'_'+session_path[-1:]
+      data = f['images/synthetic/monkey_'+final_path][:]
     with torch.no_grad():
         model_feats = []
         #fnames = sorted(glob.glob(os.path.join(FLAGS.data_path, '*.*')))
@@ -115,6 +121,9 @@ def val():
             model(im)
             model_feats.append(_model_feats[0])
         model_feats = np.concatenate(model_feats)
+    if FLAGS.output_path is not None:
+      fname = f'{FLAGS.session}/VOneCORnet-S/{FLAGS.layer}_{FLAGS.sublayer}_feats.npy'
+      np.save(os.path.join(FLAGS.output_path, fname), model_feats)
 
 
     # model_feats = []
