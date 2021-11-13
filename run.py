@@ -2,6 +2,8 @@
 import os, argparse, time, subprocess, io, shlex
 import pandas as pd
 import tqdm
+from advertorch.attacks import LinfPGDAttack, L2PGDAttack
+import numpy as np
 
 parser = argparse.ArgumentParser(description='ImageNet Validation')
 
@@ -106,10 +108,22 @@ class ImageNetVal(object):
         self.model.eval()
         start = time.time()
         record = {'loss': 0, 'top1': 0, 'top5': 0}
+        min_pixel=0
+        max_pixel=0
         with torch.no_grad():
+            adversary = L2PGDAttack(
+            self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=6.0,
+            nb_iter=20, eps_iter=0.75, rand_init=True, clip_min=-1.0, clip_max=1.0,
+            targeted=False)
             for (inp, target) in tqdm.tqdm(self.data_loader, desc=self.name):
                 target = target.to(device)
-                output = self.model(inp)
+                inp = inp.to(device)
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                with torch.enable_grad():
+                  with torch.autograd.set_detect_anomaly(True):
+                    adv_untargeted = adversary.perturb(inp.cuda(non_blocking=True), target.cuda(non_blocking=True))
+                print(torch.norm(adv_untargeted-inp,p=2))
+                output = self.model(adv_untargeted)
 
                 record['loss'] += self.loss(output, target).item()
                 p1, p5 = accuracy(output, target, topk=(1, 5))
@@ -119,7 +133,7 @@ class ImageNetVal(object):
         for key in record:
             record[key] /= len(self.data_loader.dataset.samples)
         record['dur'] = (time.time() - start) / len(self.data_loader)
-
+        print(min_pixel,max_pixel)
         return record
 
 
