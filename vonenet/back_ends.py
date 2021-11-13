@@ -257,15 +257,15 @@ class CORblock_S(nn.Module):
 
         self.conv1 = nn.Conv2d(out_channels, out_channels * self.scale,
                                kernel_size=1, bias=False)
-        self.nonlin1 = nn.ReLU(inplace=True) #
+        self.nonlin1 = nn.ReLU(inplace=False) #
 
         self.conv2 = nn.Conv2d(out_channels * self.scale, out_channels * self.scale,
                                kernel_size=3, stride=2, padding=1, bias=False)
-        self.nonlin2 = nn.ReLU(inplace=True) #
+        self.nonlin2 = nn.ReLU(inplace=False) #
 
         self.conv3 = nn.Conv2d(out_channels * self.scale, out_channels,
                                kernel_size=1, bias=False)
-        self.nonlin3 = nn.ReLU(inplace=True) #
+        self.nonlin3 = nn.ReLU(inplace=False) #
 
         self.output = Identity()  # for an easy access to this block's output
 
