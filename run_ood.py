@@ -115,10 +115,10 @@ class ImageNetVal(object):
         min_pixel=0
         max_pixel=0
         with torch.no_grad():
-            adversary = L2PGDAttack(
-            self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=6.0,
-            nb_iter=20, eps_iter=0.75, rand_init=True, clip_min=-1.0, clip_max=1.0,
-            targeted=False)
+            # adversary = L2PGDAttack(
+            # self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=6.0,
+            # nb_iter=20, eps_iter=0.75, rand_init=True, clip_min=-1.0, clip_max=1.0,
+            # targeted=False)
             for (inp, target) in tqdm.tqdm(self.data_loader, desc=self.name):
                 target = target.to(device)
                 inp = inp.to(device)
