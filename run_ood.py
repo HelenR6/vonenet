@@ -2,7 +2,7 @@
 import os, argparse, time, subprocess, io, shlex
 import pandas as pd
 import tqdm
-from advertorch.attacks import LinfPGDAttack, L2PGDAttack
+# from advertorch.attacks import LinfPGDAttack, L2PGDAttack
 import numpy as np
 
 parser = argparse.ArgumentParser(description='ImageNet Validation')
