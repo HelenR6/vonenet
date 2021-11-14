@@ -91,7 +91,7 @@ class ImageNetVal(object):
 
     def data(self):
         dataset = torchvision.datasets.ImageFolder(
-            os.path.join(FLAGS.in_path, 'val'),
+#             os.path.join(FLAGS.in_path, 'val'),
             torchvision.transforms.Compose([
                 torchvision.transforms.Resize(256),
                 torchvision.transforms.CenterCrop(224),
