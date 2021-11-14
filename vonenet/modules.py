@@ -85,8 +85,8 @@ class VOneBlock(nn.Module):
     def gabors_f(self, x):
         s_q0 = self.simple_conv_q0(x)
         s_q1 = self.simple_conv_q1(x)
-        c = self.complex(torch.sqrt(s_q0[:, self.simple_channels:, :, :] ** 2 +
-                                    s_q1[:, self.simple_channels:, :, :] ** 2) / np.sqrt(2))
+        c = self.complex(torch.sqrt(s_q0[:, self.simple_channels:, :, :].clone() ** 2 +
+                                    s_q1[:, self.simple_channels:, :, :].clone() ** 2) / np.sqrt(2))
         s = self.simple(s_q0[:, 0:self.simple_channels, :, :])
         return self.gabors(self.k_exc * torch.cat((s, c), 1))
 
