@@ -146,8 +146,8 @@ class ImageNetVal(object):
         for key in record:
             record[key] /= len(self.data_loader.dataset.samples)
         record['dur'] = (time.time() - start) / len(self.data_loader)
-        # print(min_pixel,max_pixel)
-        np.save('/content/gdrive/MyDrive/model_OOD_acc/imagenet-r/VOneCORnet-S.npy',top1)
+        print(record)
+        np.save('/content/gdrive/MyDrive/model_OOD_acc/imagenet-r/VOneCORnet-S.npy',record['top1']*100)
         return record
 
 
