@@ -128,12 +128,12 @@ class ImageNetVal(object):
               targeted=False)
             if int(FLAGS.attack)==1:
               adversary = L1PGDAttack(
-              self.modelmodel, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=190.316,
+              self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=190.316,
               nb_iter=20, eps_iter=23.7895, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
               targeted=False)
             if FLAGS.attack=="inf":
               adversary = LinfPGDAttack(
-              self.modelmodel, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=4.7579/1020,
+              self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=4.7579/1020,
               nb_iter=20, eps_iter=0.000233, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
               targeted=False)
             for (inp, target) in tqdm.tqdm(self.data_loader, desc=self.name):
