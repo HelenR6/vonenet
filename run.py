@@ -128,12 +128,12 @@ class ImageNetVal(object):
               targeted=False)
             if int(FLAGS.attack)==1:
               adversary = L1PGDAttack(
-              model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=190.316,
+              self.modelmodel, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=190.316,
               nb_iter=20, eps_iter=23.7895, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
               targeted=False)
             if FLAGS.attack=="inf":
               adversary = LinfPGDAttack(
-              model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=4.7579/1020,
+              self.modelmodel, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=4.7579/1020,
               nb_iter=20, eps_iter=0.000233, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
               targeted=False)
             for (inp, target) in tqdm.tqdm(self.data_loader, desc=self.name):
@@ -157,12 +157,13 @@ class ImageNetVal(object):
                 accuracy_array=[]
         accuracy_array.append(record['top1'])
         accuracy_array.append(record['top5'])
-        if int(FLAGS.attack)==2:
-          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l2_0.15/{args.arch}_accuracy.npy', accuracy_array)
-        if int(FLAGS.attack)==1:
-          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l1_40/{args.arch}_accuracy.npy', accuracy_array)
-        if (FLAGS.attack)=="inf":
-          np.save(f'/content/gdrive/MyDrive/model_adv_loss/linf1_1020/{args.arch}_accuracy.npy', accuracy_array)
+                if (FLAGS.attack)=="inf":
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/linf1_1020/VOneCORnet-S_accuracy.npy', accuracy_array)
+        if FLAGS.attack=="2":
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l2_0.15/VOneCORnet-S_accuracy.npy', accuracy_array)
+        if FLAGS.attack=="1":
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l1_40/VOneCORnet-S_accuracy.npy', accuracy_array)
+
         return record
 
 
