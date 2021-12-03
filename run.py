@@ -2,7 +2,7 @@
 import os, argparse, time, subprocess, io, shlex
 import pandas as pd
 import tqdm
-from advertorch.attacks import LinfPGDAttack, L2PGDAttack
+from advertorch.attacks import LinfPGDAttack, L2PGDAttack,L1PGDAttack
 import numpy as np
 
 parser = argparse.ArgumentParser(description='ImageNet Validation')
@@ -17,6 +17,8 @@ parser.add_argument('--ngpus', default=1, type=int,
                     help='number of GPUs to use; 0 if you want to run on CPU')
 parser.add_argument('--model_arch', choices=['alexnet', 'resnet50', 'resnet50_at', 'cornets'], default='resnet50',
                     help='back-end model architecture to load')
+parser.add_argument('--attack',
+                    help='type of attack'
 
 FLAGS, FIRE_FLAGS = parser.parse_known_args()
 
@@ -111,14 +113,33 @@ class ImageNetVal(object):
         min_pixel=0
         max_pixel=0
         with torch.no_grad():
-            adversary = L2PGDAttack(
-            self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=6.0,
-            nb_iter=20, eps_iter=0.75, rand_init=True, clip_min=-1.0, clip_max=1.0,
-            targeted=False)
+#             adversary = L2PGDAttack(
+#             self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=6.0,
+#             nb_iter=20, eps_iter=0.75, rand_init=True, clip_min=-1.0, clip_max=1.0,
+#             targeted=False)
+            if int(FLAGS.attack)==2:
+#               adversary = L2PGDAttack(
+#               self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=14.2737,
+#               nb_iter=20, eps_iter=1.784, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
+#               targeted=False)
+              adversary = L2PGDAttack(
+              self.model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=0.7137,
+              nb_iter=20, eps_iter=0.09, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
+              targeted=False)
+            if int(FLAGS.attack)==1:
+              adversary = L1PGDAttack(
+              model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=190.316,
+              nb_iter=20, eps_iter=23.7895, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
+              targeted=False)
+            if FLAGS.attack=="inf":
+              adversary = LinfPGDAttack(
+              model, loss_fn=nn.CrossEntropyLoss(reduction="sum"), eps=4.7579/1020,
+              nb_iter=20, eps_iter=0.000233, rand_init=True, clip_min=-2.1179, clip_max=2.6400,
+              targeted=False)
             for (inp, target) in tqdm.tqdm(self.data_loader, desc=self.name):
                 target = target.to(device)
                 inp = inp.to(device)
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                
                 with torch.enable_grad():
                   with torch.autograd.set_detect_anomaly(True):
                     adv_untargeted = adversary.perturb(inp.cuda(non_blocking=True), target.cuda(non_blocking=True))
@@ -133,7 +154,15 @@ class ImageNetVal(object):
         for key in record:
             record[key] /= len(self.data_loader.dataset.samples)
         record['dur'] = (time.time() - start) / len(self.data_loader)
-        print(min_pixel,max_pixel)
+                accuracy_array=[]
+        accuracy_array.append(record['top1'])
+        accuracy_array.append(record['top5'])
+        if int(FLAGS.attack)==2:
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l2_0.15/{args.arch}_accuracy.npy', accuracy_array)
+        if int(FLAGS.attack)==1:
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/l1_40/{args.arch}_accuracy.npy', accuracy_array)
+        if (FLAGS.attack)=="inf":
+          np.save(f'/content/gdrive/MyDrive/model_adv_loss/linf1_1020/{args.arch}_accuracy.npy', accuracy_array)
         return record
 
 
