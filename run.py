@@ -18,7 +18,7 @@ parser.add_argument('--ngpus', default=1, type=int,
 parser.add_argument('--model_arch', choices=['alexnet', 'resnet50', 'resnet50_at', 'cornets'], default='resnet50',
                     help='back-end model architecture to load')
 parser.add_argument('--attack',
-                    help='type of attack'
+                    help='type of attack')
 
 FLAGS, FIRE_FLAGS = parser.parse_known_args()
 
@@ -154,10 +154,10 @@ class ImageNetVal(object):
         for key in record:
             record[key] /= len(self.data_loader.dataset.samples)
         record['dur'] = (time.time() - start) / len(self.data_loader)
-                accuracy_array=[]
+        accuracy_array=[]
         accuracy_array.append(record['top1'])
         accuracy_array.append(record['top5'])
-                if (FLAGS.attack)=="inf":
+        if (FLAGS.attack)=="inf":
           np.save(f'/content/gdrive/MyDrive/model_adv_loss/linf1_1020/VOneCORnet-S_accuracy.npy', accuracy_array)
         if FLAGS.attack=="2":
           np.save(f'/content/gdrive/MyDrive/model_adv_loss/l2_0.15/VOneCORnet-S_accuracy.npy', accuracy_array)
