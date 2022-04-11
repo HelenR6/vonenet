@@ -2,7 +2,7 @@
 import os, argparse, time, subprocess, io, shlex
 import pandas as pd
 import tqdm
-from advertorch.attacks import LinfPGDAttack, L2PGDAttack,L1PGDAttack
+
 import numpy as np
 
 parser = argparse.ArgumentParser(description='ImageNet Validation')
@@ -17,8 +17,7 @@ parser.add_argument('--ngpus', default=1, type=int,
                     help='number of GPUs to use; 0 if you want to run on CPU')
 parser.add_argument('--model_arch', choices=['alexnet', 'resnet50', 'resnet50_at', 'cornets'], default='resnet50',
                     help='back-end model architecture to load')
-parser.add_argument('--attack',
-                    help='type of attack')
+
 
 FLAGS, FIRE_FLAGS = parser.parse_known_args()
 
