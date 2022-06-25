@@ -101,7 +101,7 @@ def val():
     f = h5py.File('/content/gdrive/MyDrive/npc_v4_data.h5','r')
     if FLAGS.session=='natural':
       data = f['images/naturalistic'][:]
-    else if FLAGS.session == 'imagenet':
+    elif FLAGS.session == 'imagenet':
       num_classes = 1000
       num_images=1000
       num_images_per_class = (
