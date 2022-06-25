@@ -132,10 +132,10 @@ def val():
         #     raise FileNotFoundError(f'No files found in {FLAGS.data_path}')
         for fname in tqdm.tqdm(data):
             try:
-                if FLAGS.session != 'imagenet':
-                  im = Image.fromarray(fname).convert('RGB')
-                else:
+                if FLAGS.session == 'imagenet':
                   im = Image.open(fname)
+                else:
+                  im = Image.fromarray(fname).convert('RGB')
                     
             except:
                 raise FileNotFoundError(f'Unable to load {fname}')
